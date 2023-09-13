@@ -74,6 +74,12 @@ export const useWpbStore = defineStore('wpb', {
     },
   },
   actions: {
+    setAutosavePreferences() {
+      const authStore = useAuthStore();
+      let autoSave = $lget(authStore.authUser, 'preferences.autoSave', {});
+      this.autoSave = autoSave.value;
+      this.autoSaveDebounce = autoSave.debounce;
+    },
     setCurrentElement(payload) {
       this.currentElement = payload;
     },
@@ -333,7 +339,7 @@ export const useWpbStore = defineStore('wpb', {
             await new Promise((resolve, reject) => {
               collection.update({_id: change_record._id}, {active: true}, error => error ? reject(error) : resolve());
             });
-            // this.setUndoRedoStatus(pageCopy);
+            this.setUndoRedoStatus(pageCopy);
           }
           let wpbPagesStore = useWpbPagesStore();
           wpbPagesStore.addOrUpdate(pageCopy);
